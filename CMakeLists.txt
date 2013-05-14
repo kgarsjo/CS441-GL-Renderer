@@ -17,4 +17,3 @@ if(VTK_LIBRARIES)
 else()
   target_link_libraries(project2A vtkHybrid)
 endif()
-

@@ -40,6 +40,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkCellArray.h>
 
+using std::vector;
 
 class Triangle
 {
@@ -50,6 +51,9 @@ class Triangle
       double         fieldValue[3]; // always between 0 and 1
       double         normals[3][3];
 };
+
+vector<Triangle> triangs;
+GLuint displayList;
 
 //
 // Function: GetTriangles
@@ -215,24 +219,45 @@ class vtk441Mapper : public vtkOpenGLPolyDataMapper
 // ------------------------------------------------ */
 class vtk441MapperPart1 : public vtk441Mapper
 {
- public:
-   static vtk441MapperPart1 *New();
+public:
+	GLuint displaylist;
+
+	static vtk441MapperPart1 *New();
+
+	void init() {
+		displaylist= glGenLists(1);
+		glNewList(displaylist, GL_COMPILE);
+		
+		printf("Map1: Building display list\n");
+
+		glBegin(GL_TRIANGLES);
+		for (int i= 0; i < triangs.size(); i++) {
+			Triangle t= triangs[i];
+			glVertex3f(t.X[0], t.Y[0], t.Z[0]);
+			glVertex3f(t.X[1], t.Y[1], t.Z[1]);
+			glVertex3f(t.X[2], t.Y[2], t.Z[2]);
+		}		
+		glEnd();
+
+		glEndList();
+		printf("Map1: Display list finished\n");
+	}
    
-   virtual void RenderPiece(vtkRenderer *ren, vtkActor *act)
-   {
-      RemoveVTKOpenGLStateSideEffects();
-      SetupLight();
-      glBegin(GL_TRIANGLES);
-      glVertex3f(-10, -10, -10);
-      glVertex3f(10, -10, 10);
-      glVertex3f(10, 10, 10);
-      glEnd();
-   }
+	virtual void RenderPiece(vtkRenderer *ren, vtkActor *act) {
+		RemoveVTKOpenGLStateSideEffects();
+		SetupLight();
+		glBegin(GL_TRIANGLES);
+		for (int i= 0; i < triangs.size(); i++) {
+			Triangle t= triangs[i];
+			glVertex3f(t.X[0], t.Y[0], t.Z[0]);
+			glVertex3f(t.X[1], t.Y[1], t.Z[1]);
+			glVertex3f(t.X[2], t.Y[2], t.Z[2]);
+		}		
+		glEnd();	
+	}
 };
 
 vtkStandardNewMacro(vtk441MapperPart1);
-
-
 
 /* ------------------------------------------------ //
 	vtk441MapperPart2 - Renders the geometry
@@ -311,13 +336,16 @@ int main()
     vtkSmartPointer<vtkRenderWindowInteractor>::New();
   iren->SetRenderWindow(renWin);
 
+  triangs= GetTriangles();
+
   // Add the actors to the renderer, set the background and size.
   //
   bool doWindow1 = true;
   if (doWindow1)
+	win1Mapper->init();
      ren1->AddActor(win1Actor);
   ren1->SetBackground(0.0, 0.0, 0.0);
-  bool doWindow2 = true;
+  bool doWindow2 = false;
   if (doWindow2)
       ren2->AddActor(win2Actor);
   ren2->SetBackground(0.0, 0.0, 0.0);
