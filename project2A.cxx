@@ -41,6 +41,7 @@
 #include <vtkCellArray.h>
 
 using std::vector;
+void renderCube();
 
 class Triangle
 {
@@ -236,8 +237,9 @@ public:
 			glVertex3f(t.X[0], t.Y[0], t.Z[0]);
 			glVertex3f(t.X[1], t.Y[1], t.Z[1]);
 			glVertex3f(t.X[2], t.Y[2], t.Z[2]);
-		}		
+		}
 		glEnd();
+
 
 		glEndList();
 		printf("Map1: Display list finished\n");
@@ -253,7 +255,8 @@ public:
 			glVertex3f(t.X[1], t.Y[1], t.Z[1]);
 			glVertex3f(t.X[2], t.Y[2], t.Z[2]);
 		}		
-		glEnd();	
+		glEnd();
+		renderCube();	
 	}
 };
 
@@ -288,6 +291,42 @@ class vtk441MapperPart2 : public vtk441Mapper
 };
 
 vtkStandardNewMacro(vtk441MapperPart2);
+
+
+void renderCube() {
+	// Render backplane
+	glBegin(GL_LINES);
+	glVertex3f(-10, -10, -10);
+	glVertex3f(10, -10, -10);
+	glVertex3f(-10, -10, -10);
+	glVertex3f(-10, 10, -10);
+	glVertex3f(10, 10, -10);
+	glVertex3f(-10, 10, -10);
+	glVertex3f(10, 10, -10);
+	glVertex3f(10, -10, -10);
+
+	// Render foreplane
+	glVertex3f(-10, -10, 10);
+	glVertex3f(10, -10, 10);
+	glVertex3f(-10, -10, 10);
+	glVertex3f(-10, 10, 10);
+	glVertex3f(10, 10, 10);
+	glVertex3f(-10, 10, 10);
+	glVertex3f(10, 10, 10);
+	glVertex3f(10, -10, 10);
+
+	// Render connectors
+	glVertex3f(-10, -10, 10);
+	glVertex3f(-10, -10, -10);
+	glVertex3f(10, -10, 10);
+	glVertex3f(10, -10, -10);
+	glVertex3f(-10, 10, 10);
+	glVertex3f(-10, 10, -10);
+	glVertex3f(10, 10, 10);
+	glVertex3f(10, 10, -10);
+
+	glEnd();
+}
 
 
 int main()
