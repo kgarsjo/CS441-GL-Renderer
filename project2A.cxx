@@ -39,6 +39,7 @@
 #include <vtkFloatArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkCellArray.h>
+#include <math.h>
 
 using std::vector;
 void renderCube();
@@ -54,7 +55,7 @@ class Triangle
 };
 
 vector<Triangle> triangs;
-GLuint displayList;
+unsigned char *colors;
 
 //
 // Function: GetTriangles
@@ -248,20 +249,29 @@ public:
 	virtual void RenderPiece(vtkRenderer *ren, vtkActor *act) {
 		RemoveVTKOpenGLStateSideEffects();
 		SetupLight();
+		glEnable(GL_COLOR_MATERIAL);
 		glBegin(GL_TRIANGLES);
 		for (int i= 0; i < triangs.size(); i++) {
 			Triangle t= triangs[i];
-			
+			int idx= 0;	
+					
+			idx= ceil(t.fieldValue[0] * 255.0 * 3);
+			glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 			glNormal3f(t.normals[0][0], t.normals[0][1], t.normals[0][2]);
 			glVertex3f(t.X[0], t.Y[0], t.Z[0]);
 			
+			idx= ceil(t.fieldValue[1] * 255.0 * 3);
+			glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 			glNormal3f(t.normals[1][0], t.normals[1][1], t.normals[1][2]);
 			glVertex3f(t.X[1], t.Y[1], t.Z[1]);
 			
+			idx= ceil(t.fieldValue[2] * 255.0 * 3);
+			glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 			glNormal3f(t.normals[2][0], t.normals[2][1], t.normals[2][2]);
 			glVertex3f(t.X[2], t.Y[2], t.Z[2]);
 		}		
 		glEnd();
+		glDisable(GL_COLOR_MATERIAL);
 		renderCube();	
 	}
 };
@@ -300,8 +310,15 @@ vtkStandardNewMacro(vtk441MapperPart2);
 
 
 void renderCube() {
-	// Render backplane
+	// Setup color state
+	glEnable(GL_COLOR_MATERIAL);
+
 	glBegin(GL_LINES);
+
+	// Set color
+	glColor3f(1, 1, 1);
+
+	// Render backplane
 	glVertex3f(-10, -10, -10);
 	glVertex3f(10, -10, -10);
 	glVertex3f(-10, -10, -10);
@@ -332,6 +349,7 @@ void renderCube() {
 	glVertex3f(10, 10, -10);
 
 	glEnd();
+	glDisable(GL_COLOR_MATERIAL);
 }
 
 
@@ -382,6 +400,7 @@ int main()
   iren->SetRenderWindow(renWin);
 
   triangs= GetTriangles();
+  colors= GetColorMap();
 
   // Add the actors to the renderer, set the background and size.
   //
