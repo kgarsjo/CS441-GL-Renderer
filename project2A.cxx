@@ -255,17 +255,17 @@ public:
 			Triangle t= triangs[i];
 			int idx= 0;	
 					
-			idx= ceil(t.fieldValue[0] * 255.0 * 3);
+			idx= ceil(t.fieldValue[0] * 255.0) * 3;
 			glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 			glNormal3f(t.normals[0][0], t.normals[0][1], t.normals[0][2]);
 			glVertex3f(t.X[0], t.Y[0], t.Z[0]);
 			
-			idx= ceil(t.fieldValue[1] * 255.0 * 3);
+			idx= ceil(t.fieldValue[1] * 255.0) * 3;
 			glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 			glNormal3f(t.normals[1][0], t.normals[1][1], t.normals[1][2]);
 			glVertex3f(t.X[1], t.Y[1], t.Z[1]);
 			
-			idx= ceil(t.fieldValue[2] * 255.0 * 3);
+			idx= ceil(t.fieldValue[2] * 255.0) * 3;
 			glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 			glNormal3f(t.normals[2][0], t.normals[2][1], t.normals[2][2]);
 			glVertex3f(t.X[2], t.Y[2], t.Z[2]);
