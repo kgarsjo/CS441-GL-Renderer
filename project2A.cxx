@@ -251,8 +251,14 @@ public:
 		glBegin(GL_TRIANGLES);
 		for (int i= 0; i < triangs.size(); i++) {
 			Triangle t= triangs[i];
+			
+			glNormal3f(t.normals[0][0], t.normals[0][1], t.normals[0][2]);
 			glVertex3f(t.X[0], t.Y[0], t.Z[0]);
+			
+			glNormal3f(t.normals[1][0], t.normals[1][1], t.normals[1][2]);
 			glVertex3f(t.X[1], t.Y[1], t.Z[1]);
+			
+			glNormal3f(t.normals[2][0], t.normals[2][1], t.normals[2][2]);
 			glVertex3f(t.X[2], t.Y[2], t.Z[2]);
 		}		
 		glEnd();
