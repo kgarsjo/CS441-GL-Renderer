@@ -274,22 +274,35 @@ class vtk441MapperPart2 : public vtk441Mapper
  public:
 	static vtk441MapperPart2 *New();
 	
-	GLuint displayList;
-	bool	initialized;
+	GLuint dlist;
+	bool initialized;
 
 	vtk441MapperPart2()
 	{
 		initialized = false;
 	}
+
+	void init() {
+		dlist= glGenLists(1);
+		glNewList(dlist, GL_COMPILE);
+			glBegin(GL_TRIANGLES);
+			glVertex3f(-10, -10, -10);
+			glVertex3f(10, -10, 10);
+			glVertex3f(10, 10, 10);
+			glEnd();	
+		glEndList();
+		initialized= true;
+	}
+
 	virtual void RenderPiece(vtkRenderer *ren, vtkActor *act)
 	{
 		RemoveVTKOpenGLStateSideEffects();
 		SetupLight();
-		glBegin(GL_TRIANGLES);
-		glVertex3f(-10, -10, -10);
-		glVertex3f(10, -10, 10);
-		glVertex3f(10, 10, 10);
-		glEnd();
+		if (!initialized) {
+			init();
+		}
+
+		glCallList(dlist);
 	}
 };
 
