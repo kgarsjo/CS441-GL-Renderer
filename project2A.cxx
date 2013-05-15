@@ -275,6 +275,9 @@ class vtk441MapperPart2 : public vtk441Mapper
 	static vtk441MapperPart2 *New();
 	
 	GLuint dlist;
+	GLuint texture;
+	GLubyte tex[256 * 3];
+
 	bool initialized;
 
 	vtk441MapperPart2()
@@ -283,24 +286,44 @@ class vtk441MapperPart2 : public vtk441Mapper
 	}
 
 	void init() {
+		for (int i= 0; i < 256 * 3; i++) {
+			tex[i]= (GLubyte) colors[i];
+		} 
+
+		
+
 		dlist= glGenLists(1);
 		glNewList(dlist, GL_COMPILE);
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_1D, texture);
+			glTexImage1D(GL_TEXTURE_1D, 0, 	GL_RGB, 256 * 3, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+			glEnable(GL_COLOR_MATERIAL);
+			glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glEnable(GL_TEXTURE_1D);
+
 			glBegin(GL_TRIANGLES);
 			
 			for (int i= 0; i < triangs.size(); i++) {
 				Triangle t= triangs[i];
 	
+				glTexCoord1f( t.fieldValue[0] );
 				glNormal3f(t.normals[0][0], t.normals[0][1], t.normals[0][2]);
 				glVertex3f(t.X[0], t.Y[0], t.Z[0]);
 	
+				glTexCoord1f( t.fieldValue[1] );
 				glNormal3f(t.normals[1][0], t.normals[1][1], t.normals[1][2]);
 				glVertex3f(t.X[1], t.Y[1], t.Z[1]);
 	
+				glTexCoord1f( t.fieldValue[2] );
 				glNormal3f(t.normals[2][0], t.normals[2][1], t.normals[2][2]);
 				glVertex3f(t.X[2], t.Y[2], t.Z[2]);
 			}
 
-			glEnd();	
+			glEnd();
+			glDisable(GL_TEXTURE_1D);
+			glDisable(GL_COLOR_MATERIAL);
+			renderCube();
 		glEndList();
 		initialized= true;
 	}
