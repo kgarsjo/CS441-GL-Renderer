@@ -286,9 +286,14 @@ class vtk441MapperPart2 : public vtk441Mapper
 		dlist= glGenLists(1);
 		glNewList(dlist, GL_COMPILE);
 			glBegin(GL_TRIANGLES);
-			glVertex3f(-10, -10, -10);
-			glVertex3f(10, -10, 10);
-			glVertex3f(10, 10, 10);
+			
+			for (int i= 0; i < triangs.size(); i++) {
+				Triangle t= triangs[i];
+				glVertex3f(t.X[0], t.Y[0], t.Z[0]);
+				glVertex3f(t.X[1], t.Y[1], t.Z[1]);
+				glVertex3f(t.X[2], t.Y[2], t.Z[2]);
+			}
+
 			glEnd();	
 		glEndList();
 		initialized= true;
