@@ -31,6 +31,7 @@
 #include "vtkJPEGReader.h"
 #include "vtkImageData.h"
 
+#include <math.h>
 #include <vtkPolyData.h>
 #include <vtkPointData.h>
 #include <vtkPolyDataReader.h>
@@ -54,7 +55,7 @@ public:
 };
 
 std::vector<Triangle> triangs;
-
+unsigned char *colors;
 
 //
 // Function: GetTriangles
@@ -223,14 +224,29 @@ public:
 	void init() {
 		dlist= glGenLists(1);
 		glNewList(dlist, GL_COMPILE);
+			glEnable(GL_COLOR_MATERIAL);
 			glBegin(GL_TRIANGLES);
+
 			for (int i= 0; i < triangs.size(); i++) {
 				Triangle t= triangs[i];
+				int idx;
+			
+				idx= ceil( t.fieldValue[0] * 255.0) * 3;
+				glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 				glVertex3f(t.X[0], t.Y[0], t.Z[0]);
+
+				idx= ceil( t.fieldValue[1] * 255.0) * 3;
+				glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 				glVertex3f(t.X[1], t.Y[1], t.Z[1]);
+
+				
+				idx= ceil( t.fieldValue[2] * 255.0) * 3;
+				glColor3ub(colors[idx], colors[idx+1], colors[idx+2]);
 				glVertex3f(t.X[2], t.Y[2], t.Z[2]);
 			}
+
 			glEnd();
+			glDisable(GL_COLOR_MATERIAL);
 			renderCube();
 		glEndList();
 		initialized= true;
@@ -358,8 +374,9 @@ int main()
 	vtkSmartPointer<vtkRenderer> ren2 =
 	vtkSmartPointer<vtkRenderer>::New();
 
-	// Fetch and store triangle data
+	// Fetch and store triangle and color data
 	triangs= GetTriangles();
+	colors= GetColorMap();
 
 	vtkSmartPointer<vtkRenderWindow> renWin =
 	vtkSmartPointer<vtkRenderWindow>::New();
